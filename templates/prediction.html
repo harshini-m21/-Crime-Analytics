@@ -1,0 +1,172 @@
+﻿{% extends "base.html" %}
+{% block title %}Crime Prediction — CrimeVision{% endblock %}
+{% block breadcrumb %}Prediction{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Crime <span class="gradient-text">Prediction</span></h1>
+        <p class="page-subtitle">Random Forest ML model — predict crime type from victim & incident details</p>
+    </div>
+</div>
+
+<div class="prediction-layout">
+    <!-- Form Card -->
+    <div class="pred-form-card">
+        <div class="pred-form-header">
+            <div class="pred-form-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <div>
+                <h2 class="pred-form-title">Prediction Form</h2>
+                <p class="pred-form-sub">Fill in the incident details below</p>
+            </div>
+        </div>
+
+        <form id="predictionForm" class="pred-form" novalidate>
+            <div class="form-field">
+                <label class="form-label" for="victimAge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Victim Age
+                </label>
+                <input type="number" id="victimAge" name="victim_age" min="0" max="120" placeholder="Enter age (0-120)" class="form-input" required>
+                <span class="form-hint">Age of the victim (0–120)</span>
+            </div>
+
+            <div class="form-field">
+                <label class="form-label" for="city">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2"/></svg>
+                    City
+                </label>
+                <select id="city" name="city" class="form-select" required>
+                    <option value="">— Select City —</option>
+                    {% for c in cities %}
+                    <option value="{{ c }}">{{ c }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label class="form-label" for="victimGender">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M20 21a8 8 0 10-16 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    Victim Gender
+                </label>
+                <select id="victimGender" name="victim_gender" class="form-select" required>
+                    <option value="">— Select Gender —</option>
+                    {% for g in genders %}
+                    <option value="{{ g }}">{% if g=='M' %}Male{% elif g=='F' %}Female{% else %}Other (X){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label class="form-label" for="weaponUsed">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Weapon Used
+                </label>
+                <select id="weaponUsed" name="weapon_used" class="form-select" required>
+                    <option value="">— Select Weapon —</option>
+                    {% for w in weapons %}
+                    <option value="{{ w }}">{{ w }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-field">
+                <label class="form-label" for="crimeDomain">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    Crime Domain
+                </label>
+                <select id="crimeDomain" name="crime_domain" class="form-select" required>
+                    <option value="">— Select Domain —</option>
+                    {% for d in domains %}
+                    <option value="{{ d }}">{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-error-msg hidden" id="formErrorMsg">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <span id="formErrorText">Please fill in all fields correctly.</span>
+            </div>
+
+            <button type="submit" class="btn-predict" id="predictBtn">
+                <span class="btn-text">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    Run Prediction
+                </span>
+                <span class="btn-loading hidden">
+                    <span class="spinner"></span> Analyzing...
+                </span>
+            </button>
+        </form>
+    </div>
+
+    <!-- Result Panel -->
+    <div class="pred-result-panel" id="predResultPanel">
+        <!-- Empty State -->
+        <div class="pred-empty" id="predEmpty">
+            <div class="pred-empty-icon">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="#6366f1" stroke-width="1.5"/><path d="m21 21-4.35-4.35" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/><path d="M11 8v3M11 14h.01" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </div>
+            <h3>No Prediction Yet</h3>
+            <p>Fill in the form on the left and click <strong>Run Prediction</strong> to see the ML model prediction result here.</p>
+        </div>
+
+        <!-- Result Card (hidden until prediction) -->
+        <div class="pred-result hidden" id="predResult">
+            <div class="pred-result-header">
+                <div class="pred-result-badge">ML Prediction Result</div>
+                <div class="pred-confidence-ring" id="confidenceRing">
+                    <svg viewBox="0 0 80 80">
+                        <circle cx="40" cy="40" r="34" fill="none" stroke="#1e293b" stroke-width="8"/>
+                        <circle cx="40" cy="40" r="34" fill="none" stroke="#6366f1" stroke-width="8"
+                                stroke-dasharray="213.6" stroke-dashoffset="213.6"
+                                stroke-linecap="round" transform="rotate(-90 40 40)"
+                                id="confCircle"/>
+                    </svg>
+                    <div class="conf-label">
+                        <div class="conf-pct" id="confPct">0%</div>
+                        <div class="conf-text">Confidence</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pred-main-result">
+                <div class="pred-label">Predicted Crime Type</div>
+                <div class="pred-value" id="predictedCrime">—</div>
+            </div>
+
+            <div class="pred-inputs-recap">
+                <h4>Input Summary</h4>
+                <div class="recap-grid" id="recapGrid"></div>
+            </div>
+
+            <div class="pred-top3">
+                <h4>Top 3 Predictions</h4>
+                <div class="top3-list" id="top3List"></div>
+            </div>
+
+            <button class="btn-secondary pred-reset-btn" id="resetPredBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M1 4v6h6M23 20v-6h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10M23 14l-4.64 4.36A9 9 0 013.51 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                New Prediction
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Feature Importance Info -->
+<div class="info-card">
+    <div class="info-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 16v-4M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </div>
+    <div>
+        <h4>Feature Order Used by the ML Model</h4>
+        <p>The prediction uses exactly these 5 features in order: <strong>Victim Age → City → Victim Gender → Weapon Used → Crime Domain</strong>. The model predicts the <strong>Crime Description</strong> (target).</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/prediction.js') }}"></script>
+{% endblock %}

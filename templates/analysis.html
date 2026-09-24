@@ -1,0 +1,133 @@
+﻿{% extends "base.html" %}
+{% block title %}Crime Analysis — CrimeVision{% endblock %}
+{% block breadcrumb %}Crime Analysis{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Crime <span class="gradient-text">Analysis</span></h1>
+        <p class="page-subtitle">Interactive exploration of crime patterns and trends</p>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="filter-bar">
+    <div class="filter-group">
+        <label class="filter-label">City</label>
+        <select class="filter-select" id="filterCity"><option value="All">All Cities</option></select>
+    </div>
+    <div class="filter-group">
+        <label class="filter-label">Year</label>
+        <select class="filter-select" id="filterYear"><option value="All">All Years</option></select>
+    </div>
+    <div class="filter-group">
+        <label class="filter-label">Domain</label>
+        <select class="filter-select" id="filterDomain"><option value="All">All Domains</option></select>
+    </div>
+    <button class="btn-primary" id="applyFilters">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V19l-4-4v-3.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        Apply Filters
+    </button>
+    <button class="btn-secondary" id="resetFilters">Reset</button>
+    <div class="filter-result-badge">Showing: <span id="filteredTotal">—</span> records</div>
+</div>
+
+<!-- Analysis Charts -->
+<div class="charts-row">
+    <div class="chart-card chart-card--wide">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Crime Types Breakdown</h3>
+                <p class="chart-sub">Top crime descriptions (filtered)</p>
+            </div>
+        </div>
+        <div class="chart-wrap chart-wrap--lg"><canvas id="analysisCrimeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Year-wise Trend</h3>
+                <p class="chart-sub">Crime count by year (filtered)</p>
+            </div>
+        </div>
+        <div class="chart-wrap"><canvas id="analysisYearChart"></canvas></div>
+    </div>
+</div>
+
+<div class="charts-row">
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Top Cities</h3>
+                <p class="chart-sub">City-wise crime count (filtered)</p>
+            </div>
+        </div>
+        <div class="chart-wrap chart-wrap--lg"><canvas id="analysisCityChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Case Status</h3>
+                <p class="chart-sub">Open vs Closed (filtered)</p>
+            </div>
+        </div>
+        <div class="chart-wrap chart-wrap--sm"><canvas id="analysisStatusChart"></canvas></div>
+    </div>
+</div>
+
+<!-- City-wise Table -->
+<div class="table-card">
+    <div class="table-header">
+        <div>
+            <h3 class="chart-title">City-wise Crime Statistics</h3>
+            <p class="chart-sub">Detailed breakdown per city</p>
+        </div>
+        <input type="text" class="table-search" id="cityTableSearch" placeholder="Search city...">
+    </div>
+    <div class="table-wrap">
+        <table class="data-table" id="cityTable">
+            <thead>
+                <tr>
+                    <th>City</th>
+                    <th>Total Crimes</th>
+                    <th>Closed</th>
+                    <th>Open</th>
+                    <th>Closure Rate</th>
+                    <th>Top Crime</th>
+                </tr>
+            </thead>
+            <tbody id="cityTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Crime Type Table -->
+<div class="table-card">
+    <div class="table-header">
+        <div>
+            <h3 class="chart-title">Crime Type Statistics</h3>
+            <p class="chart-sub">Detailed breakdown per crime type</p>
+        </div>
+        <input type="text" class="table-search" id="crimeTypeSearch" placeholder="Search crime type...">
+    </div>
+    <div class="table-wrap">
+        <table class="data-table" id="crimeTypeTable">
+            <thead>
+                <tr>
+                    <th>Crime Description</th>
+                    <th>Total</th>
+                    <th>Top City</th>
+                    <th>Avg. Victim Age</th>
+                    <th>Closed</th>
+                    <th>Closure Rate</th>
+                </tr>
+            </thead>
+            <tbody id="crimeTypeTableBody"></tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}

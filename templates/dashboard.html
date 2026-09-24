@@ -1,0 +1,129 @@
+﻿{% extends "base.html" %}
+{% block title %}Dashboard — CrimeVision{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">Crime Analytics <span class="gradient-text">Dashboard</span></h1>
+        <p class="page-subtitle">Comprehensive overview of crime data across Indian cities</p>
+    </div>
+</div>
+
+<!-- Stat Cards Row -->
+<div class="stats-grid" id="statsGrid">
+    <div class="stat-card loading" id="sc-total">
+        <div class="stat-icon icon-purple"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="stat-body"><div class="stat-value" id="totalCrimes">—</div><div class="stat-label">Total Crimes</div></div>
+        <div class="stat-trend up">↑ All Records</div>
+    </div>
+    <div class="stat-card loading" id="sc-cities">
+        <div class="stat-icon icon-blue"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="currentColor" stroke-width="2"/><polyline points="9 22 9 12 15 12 15 22" stroke="currentColor" stroke-width="2"/></svg></div>
+        <div class="stat-body"><div class="stat-value" id="totalCities">—</div><div class="stat-label">Cities Covered</div></div>
+        <div class="stat-trend up">↑ Pan India</div>
+    </div>
+    <div class="stat-card loading" id="sc-types">
+        <div class="stat-icon icon-orange"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="stat-body"><div class="stat-value" id="crimeTypes">—</div><div class="stat-label">Crime Types</div></div>
+        <div class="stat-trend neutral">Classification</div>
+    </div>
+    <div class="stat-card loading" id="sc-domains">
+        <div class="stat-icon icon-teal"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M8 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="stat-body"><div class="stat-value" id="crimeDomains">—</div><div class="stat-label">Crime Domains</div></div>
+        <div class="stat-trend neutral">Categories</div>
+    </div>
+    <div class="stat-card loading" id="sc-closed">
+        <div class="stat-icon icon-green"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M20 7l-11 11-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="stat-body"><div class="stat-value" id="closedCases">—</div><div class="stat-label">Cases Closed</div></div>
+        <div class="stat-trend up" id="closureRate">—% Rate</div>
+    </div>
+    <div class="stat-card loading" id="sc-acc">
+        <div class="stat-icon icon-indigo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="stat-body"><div class="stat-value" id="modelAcc">—</div><div class="stat-label">Model Accuracy</div></div>
+        <div class="stat-trend neutral">Random Forest</div>
+    </div>
+</div>
+
+<!-- Charts Row 1 -->
+<div class="charts-row">
+    <div class="chart-card chart-card--wide">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Year-wise Crime Trend</h3>
+                <p class="chart-sub">Annual crime incidents across all cities</p>
+            </div>
+            <div class="chart-badge">Trend</div>
+        </div>
+        <div class="chart-wrap"><canvas id="yearTrendChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Case Status</h3>
+                <p class="chart-sub">Open vs Closed cases</p>
+            </div>
+            <div class="chart-badge">Status</div>
+        </div>
+        <div class="chart-wrap chart-wrap--sm"><canvas id="caseStatusChart"></canvas></div>
+    </div>
+</div>
+
+<!-- Charts Row 2 -->
+<div class="charts-row">
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Top 10 Crime Types</h3>
+                <p class="chart-sub">Most frequent crime descriptions</p>
+            </div>
+            <div class="chart-badge">Rankings</div>
+        </div>
+        <div class="chart-wrap chart-wrap--lg"><canvas id="topCrimeChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Top 10 Cities</h3>
+                <p class="chart-sub">Cities with highest crime count</p>
+            </div>
+            <div class="chart-badge">Cities</div>
+        </div>
+        <div class="chart-wrap chart-wrap--lg"><canvas id="topCitiesChart"></canvas></div>
+    </div>
+</div>
+
+<!-- Charts Row 3 -->
+<div class="charts-row">
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Crime Domains</h3>
+                <p class="chart-sub">Domain-wise distribution</p>
+            </div>
+        </div>
+        <div class="chart-wrap chart-wrap--sm"><canvas id="domainChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Weapon Distribution</h3>
+                <p class="chart-sub">Weapons used in crimes</p>
+            </div>
+        </div>
+        <div class="chart-wrap chart-wrap--sm"><canvas id="weaponChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+        <div class="chart-header">
+            <div>
+                <h3 class="chart-title">Victim Gender</h3>
+                <p class="chart-sub">Gender breakdown of victims</p>
+            </div>
+        </div>
+        <div class="chart-wrap chart-wrap--sm"><canvas id="genderChart"></canvas></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

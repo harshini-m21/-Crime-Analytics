@@ -1,0 +1,136 @@
+﻿{% extends "base.html" %}
+{% block title %}About — CrimeVision{% endblock %}
+{% block breadcrumb %}About{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1 class="page-title">About <span class="gradient-text">CrimeVision</span></h1>
+        <p class="page-subtitle">Crime Analytics Visualization Using Machine Learning</p>
+    </div>
+</div>
+
+<!-- Project Overview -->
+<div class="about-hero">
+    <div class="about-hero-content">
+        <div class="about-tag">Academic Research Project</div>
+        <h2>Crime Analytics Visualization Using Machine Learning</h2>
+        <p>
+            CrimeVision is a full-stack data analytics platform that combines a real crime dataset from Indian cities
+            with a Random Forest machine learning model to enable deep exploration of crime patterns,
+            interactive filtering, and real-time crime type prediction.
+        </p>
+        <p>
+            The project aims to demonstrate how data science and machine learning can assist in understanding
+            crime distribution, identifying patterns, and building predictive intelligence for law enforcement use cases.
+        </p>
+    </div>
+    <div class="about-hero-stats">
+        <div class="hero-stat"><div class="hero-stat-val">40,160</div><div class="hero-stat-label">Total Records</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">29</div><div class="hero-stat-label">Indian Cities</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">21</div><div class="hero-stat-label">Crime Types</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">5</div><div class="hero-stat-label">ML Features</div></div>
+    </div>
+</div>
+
+<!-- Sections Grid -->
+<div class="about-sections">
+
+    <div class="about-section-card">
+        <div class="about-section-icon icon-purple">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Dataset</h3>
+        <p>The dataset (<code>crime_dataset_india.csv</code>) contains <strong>40,160 crime records</strong> from 2020 across 29 major Indian cities. Each record includes:</p>
+        <ul>
+            <li>Report number, dates, time of occurrence</li>
+            <li>City of the incident</li>
+            <li>Crime code and description (21 types)</li>
+            <li>Victim age, gender (M/F/X)</li>
+            <li>Weapon used</li>
+            <li>Crime domain (4 categories)</li>
+            <li>Police deployed, case status</li>
+        </ul>
+    </div>
+
+    <div class="about-section-card">
+        <div class="about-section-icon icon-blue">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Data Preprocessing</h3>
+        <p>The raw dataset was cleaned and prepared for ML training:</p>
+        <ul>
+            <li><strong>Missing Weapon Used</strong> (~5,790 nulls) → filled with "Unknown"</li>
+            <li><strong>Date Case Closed</strong> — not used as feature (too many nulls)</li>
+            <li><strong>Feature selection</strong> — 5 input features chosen</li>
+            <li><strong>Label Encoding</strong> applied to all categorical columns</li>
+            <li>Final cleaned dataset exported as <code>cleaned_crime_dataset.csv</code></li>
+        </ul>
+    </div>
+
+    <div class="about-section-card">
+        <div class="about-section-icon icon-green">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Machine Learning</h3>
+        <p>A <strong>Random Forest Classifier</strong> was trained using scikit-learn:</p>
+        <ul>
+            <li>100 decision tree estimators</li>
+            <li>80/20 train-test split (random_state=42)</li>
+            <li>Training: 32,128 samples | Test: 8,032 samples</li>
+            <li>Parallel training with n_jobs=-1</li>
+            <li>Prediction target: <strong>Crime Description</strong> (21 classes)</li>
+            <li>Model persisted with <strong>joblib</strong> (.pkl files)</li>
+        </ul>
+    </div>
+
+    <div class="about-section-card">
+        <div class="about-section-icon icon-orange">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <h3>Prediction System</h3>
+        <p>The live prediction system allows users to:</p>
+        <ul>
+            <li>Select from all real values present in the dataset</li>
+            <li>Submit 5 features through a validated form</li>
+            <li>Receive the predicted <strong>Crime Description</strong></li>
+            <li>View prediction confidence percentage</li>
+            <li>See the top 3 predicted crime types with probabilities</li>
+            <li>Handles invalid inputs with informative error messages</li>
+        </ul>
+    </div>
+
+    <div class="about-section-card">
+        <div class="about-section-icon icon-teal">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Analytics Dashboard</h3>
+        <p>The interactive dashboard provides:</p>
+        <ul>
+            <li>6 summary KPI cards with live data</li>
+            <li>Year-wise crime trend line chart</li>
+            <li>Top 10 crime types and cities (bar charts)</li>
+            <li>Case status, domain, weapon, gender distribution charts</li>
+            <li>Interactive filters (city, year, domain)</li>
+            <li>Sortable city-wise and crime-type data tables</li>
+        </ul>
+    </div>
+
+    <div class="about-section-card">
+        <div class="about-section-icon icon-indigo">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3>Technologies</h3>
+        <ul>
+            <li><strong>Python 3.13</strong> — Core language</li>
+            <li><strong>Flask 3.x</strong> — Web framework & REST API</li>
+            <li><strong>Pandas 3.x</strong> — Data analysis</li>
+            <li><strong>scikit-learn 1.8</strong> — Random Forest & Label Encoding</li>
+            <li><strong>joblib</strong> — Model serialisation</li>
+            <li><strong>Chart.js 4</strong> — Interactive charts</li>
+            <li><strong>HTML5 / CSS3 / JavaScript</strong> — Frontend</li>
+            <li><strong>Google Fonts (Inter)</strong> — Typography</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
